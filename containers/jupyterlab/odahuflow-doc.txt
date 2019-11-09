@@ -1,0 +1,13 @@
+===================================
+ odahuflow Python toolchain container
+===================================
+
+Main aim of this container - to provide you a way to run your model training on local machine.
+
+1. To run jupyter lab use "jupyter lab" command
+2. To run jupyter notebook use "jupyter notebook" command
+3. To run custom python script use "python3 <script>"
+
+During training you have to call odahuflow.model functions and call odahuflow.model.save() at the end of script.
+After odahuflow.model.save() invocation your binary-serialized models will be stored inside container file-system.
+To make docker-image from your model you have to run "odahuflowctl build" inside your container.
