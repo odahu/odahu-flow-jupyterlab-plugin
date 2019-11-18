@@ -1,0 +1,99 @@
+{{ if .Values.jupyterlab.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Release.Name }}-jupyterlab"
+  labels:
+    {{- include "odahuflow.helm-labels" (dict "component" "jupyterlab" "root" .) | nindent 4 }}
+spec:
+  # JupyterLab is limited to 1 replica
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "odahuflow.helm-labels-for-search" (dict "component" "jupyterlab" "root" .) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "odahuflow.helm-labels" (dict "component" "jupyterlab" "root" .) | nindent 8 }}
+    spec:
+      containers:
+      - name: jupyterlab
+        image: "{{ include "odahuflow.image-name" (dict "root" . "service" .Values.jupyterlab "tpl" "%sodahuflow-jupyterlab:%s") }}"
+        resources:
+          {{- toYaml .Values.jupyterlab.resources | nindent 10 }}
+        env:
+        - name: METRICS_UI_URL
+          value: https://{{ include "odahuflow.ingress-domain-name" (dict "local" .Values.jupyterlab.ingress "root" . "tpl" "mlflow.%s") }}
+        - name: JUPYTER_PORT
+          value: {{ .Values.jupyterlab.port | quote }}
+        - name: JUPYTER_DISABLE_TOKEN
+          value: "yes"
+        - name: DEFAULT_EDI_ENDPOINT
+          value: https://{{ include "odahuflow.ingress-domain-name" (dict "local" .Values.jupyterlab.ingress "root" . "tpl" "edi.%s") }}
+        - name: SERVICE_CATALOG_URL
+          value: https://{{ include "odahuflow.ingress-domain-name" (dict "local" .Values.jupyterlab.ingress "root" . "tpl" "edge.%s") }}
+        - name: MLFLOW_TRACKING_URI
+          value: http://mlflow.{{ .Release.Namespace }}.svc.cluster.local
+        - name: GRAFANA_URL
+          value: https://{{ include "odahuflow.ingress-domain-name" (dict "local" .Values.jupyterlab.ingress "root" . "tpl" "grafana.%s") }}
+        ports:
+        - containerPort: {{ .Values.jupyterlab.port }}
+          name: input
+          protocol: TCP
+        - containerPort: {{ .Values.jupyterlab.port }}
+          name: input-udp
+          protocol: UDP
+        command: ["jupyter", "lab"]
+        livenessProbe:
+          httpGet:
+              path: /
+              port: {{ .Values.jupyterlab.port }}
+          initialDelaySeconds: 10
+          timeoutSeconds: 10
+          failureThreshold: 6
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Release.Name }}-jupyterlab"
+  labels:
+    {{- include "odahuflow.helm-labels" (dict "component" "jupyterlab" "root" .) | nindent 4 }}
+spec:
+  selector:
+    {{- include "odahuflow.helm-labels-for-search" (dict "component" "jupyterlab" "root" .) | nindent 4 }}
+  ports:
+  - name: input
+    port: {{ .Values.jupyterlab.port }}
+    targetPort: {{ .Values.jupyterlab.port }}
+    protocol: TCP
+  - name: input-udp
+    port: {{ .Values.jupyterlab.port }}
+    targetPort: {{ .Values.jupyterlab.port }}
+    protocol: UDP
+{{- if (ternary $.Values.jupyterlab.ingress.enabled $.Values.ingress.enabled (hasKey $.Values.jupyterlab.ingress "enabled")) }}
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+  {{- include "odahuflow.ingress-aggregated-annotations" (dict "local" .Values.jupyterlab.ingress "root" .) | nindent 4 }}
+  labels:
+    {{- include "odahuflow.helm-labels" (dict "component" "jupyterlab" "root" .) | nindent 4 }}
+  name: "{{ .Release.Name }}-jupyterlab"
+spec:
+  rules:
+    - host: {{ include "odahuflow.ingress-domain-name" (dict "local" .Values.jupyterlab.ingress "root" . "tpl" "jupyterlab.%s") }}
+      http:
+        paths:
+          - backend:
+              serviceName: "{{ .Release.Name }}-jupyterlab"
+              servicePort: {{ .Values.jupyterlab.port }}
+  {{- if (ternary $.Values.jupyterlab.ingress.tlsEnabled $.Values.ingress.tlsEnabled (hasKey $.Values.jupyterlab.ingress "tlsEnabled")) }}
+  tls:
+  - hosts:
+    - {{ include "odahuflow.ingress-domain-name" (dict "local" .Values.jupyterlab.ingress "root" . "tpl" "jupyterlab.%s") | quote }}
+    secretName: {{ include "odahuflow.ingress-tls-secret-name" (dict "local" .Values.jupyterlab.ingress "root" . ) | quote }}
+  {{- end }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,43 @@
+language: python
+dist: bionic
+python: 3.6
+services:
+  - docker
+install: skip
+matrix:
+  include:
+    ################
+    ### SECURITY ###
+    ################
+    - language: bash
+      sudo: true
+      before_script:
+        - sudo make install-vulnerabilities-checker
+      script:
+        - make check-vulnerabilities
+    ##############
+    ### PYTHON ###
+    ##############
+    - language: python
+      python: 3.6
+      before_script:
+        - make install-jupyterlab-plugin
+        - make install-unittests
+      script:
+        - make lint
+    ##########
+    ### TS ###
+    ##########
+    - language: node_js
+      node_js: 10
+      script:
+        - npm install yarn
+        - yarn install --non-interactive --ignore-scripts
+        - yarn build
+        - yarn lint
+    #####################
+    ### DOCKER IMAGES ###
+    #####################
+    - language: bash
+      script:
+        - make docker-build-jupyterlab
