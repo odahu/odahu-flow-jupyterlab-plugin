@@ -28,8 +28,8 @@ from odahuflow.jupyterlab.handlers.helper import decorate_handler_for_exception,
 from odahuflow.sdk.clients.configuration import AsyncConfigurationClient
 from odahuflow.sdk.clients.connection import AsyncConnectionClient
 from odahuflow.sdk.clients.deployment import ModelDeployment, AsyncModelDeploymentClient
-from odahuflow.sdk.clients.edi import EDIConnectionException, RemoteEdiClient
-from odahuflow.sdk.clients.edi_aggregated import parse_resources_file, async_apply, OdahuflowCloudResourceUpdatePair
+from odahuflow.sdk.clients.api import APIConnectionException, RemoteAPIClient
+from odahuflow.sdk.clients.api_aggregated import parse_resources_file, async_apply, OdahuflowCloudResourceUpdatePair
 from odahuflow.sdk.clients.packaging import AsyncModelPackagingClient
 from odahuflow.sdk.clients.packaging_integration import AsyncPackagingIntegrationClient
 from odahuflow.sdk.clients.toolchain_integration import AsyncToolchainIntegrationClient
@@ -64,21 +64,21 @@ class BaseCloudOdahuflowHandler(BaseOdahuflowHandler):
         :param target_client_class: target client's class
         :return: instance of target_client_class class
         """
-        default_edi_url = os.getenv(DEFAULT_EDI_ENDPOINT, '')
+        default_api_url = os.getenv(DEFAULT_EDI_ENDPOINT, '')
         jwt_header = self.get_token_from_header()
 
-        edi_url = self.request.headers.get(ODAHUFLOW_CLOUD_CREDENTIALS_EDI, '')
-        if not edi_url:
-            edi_url = default_edi_url
+        api_url = self.request.headers.get(ODAHUFLOW_CLOUD_CREDENTIALS_EDI, '')
+        if not api_url:
+            api_url = default_api_url
 
-        edi_token = self.request.headers.get(ODAHUFLOW_CLOUD_CREDENTIALS_TOKEN, '')
+        api_token = self.request.headers.get(ODAHUFLOW_CLOUD_CREDENTIALS_TOKEN, '')
         if jwt_header:
-            edi_token = jwt_header
+            api_token = jwt_header
 
-        if not edi_url:
+        if not api_url:
             raise HTTPError(log_message='Credentials are corrupted')
 
-        return target_client_class(edi_url, edi_token)
+        return target_client_class(api_url, api_token)
 
 
 class CloudModelPackagingHandler(BaseCloudOdahuflowHandler):
@@ -366,7 +366,7 @@ class CloudApplyFromFileHandler(BaseCloudOdahuflowHandler):
         :return: None
         """
         data = ApplyFromFileRequest(**self.get_json_body())
-        client = self.build_cloud_client(RemoteEdiClient)
+        client = self.build_cloud_client(RemoteAPIClient)
 
         try:
             resources = parse_resources_file(data.path)
@@ -375,7 +375,7 @@ class CloudApplyFromFileHandler(BaseCloudOdahuflowHandler):
 
         try:
             result = await async_apply(resources, client, data.removal)
-        except EDIConnectionException as edi_exception:
+        except APIConnectionException as edi_exception:
             raise edi_exception
         except Exception as apply_exception:
             raise HTTPError(log_message=f'Can not apply changes from resources file {data.path}: {apply_exception}')

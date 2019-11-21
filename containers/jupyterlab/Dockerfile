@@ -20,7 +20,7 @@ ARG JUPYTERLAB_VERSION=0.35.6
 FROM python:3.6.8-stretch AS plugin-frontend-rebuilder
 ARG JUPYTERLAB_VERSION
 
-ENV WORK_DIR="/opt/odahuflow-plugin"
+ENV WORK_DIR="/opt/odahu-flow-plugin"
 WORKDIR "${WORK_DIR}/"
 
 RUN \
@@ -51,7 +51,7 @@ COPY jupyter-config "${WORK_DIR}/jupyter-config"
 RUN yarn build && npm pack .
 
 # Run installation w/o any code to warm up nodejs cache
-RUN jupyter lab build && mv /opt/odahuflow-plugin/odahuflow-jupyterlab-plugin-*.tgz jupyter_odahuflow.tgz
+RUN jupyter lab build && mv /opt/odahu-flow-plugin/odahuflow-jupyterlab-plugin-*.tgz jupyter_odahuflow.tgz
 
 RUN jupyter labextension install --no-build jupyter_odahuflow.tgz && \
     jupyter labextension install @jupyterlab/git jupyterlab_toastify jupyterlab-jupytext@0.19
@@ -64,7 +64,7 @@ FROM python:3.6.8-stretch
 ARG JUPYTERLAB_VERSION
 SHELL ["/bin/bash", "-c"]
 
-ENV WORK_DIR="/opt/odahuflow"
+ENV WORK_DIR="/opt/odahu-flow"
 WORKDIR "${WORK_DIR}/"
 ARG MINICONDA_URL=https://repo.anaconda.com/miniconda/Miniconda3-4.5.11-Linux-x86_64.sh
 # Install conda
@@ -79,7 +79,7 @@ RUN apt-get update -y && apt-get install -y wget git && \
     ln -s /opt/conda/bin/conda /usr/bin/conda
 RUN  pip install --disable-pip-version-check --upgrade pip==19.2.2 pipenv==2018.10.13 ptvsd==4.2.2 jupyterlab==$JUPYTERLAB_VERSION
 
-COPY containers/jupyterlab/odahuflow-doc.txt /opt/odahuflow/
+COPY containers/jupyterlab/odahuflow-doc.txt /opt/odahu-flow/
 COPY containers/jupyterlab/conda-update.sh /usr/bin/conda-update
 
 COPY ./ "${WORK_DIR}/"
@@ -93,6 +93,10 @@ RUN pip3 install jupyterlab-git jupytext==1.1.7 && \
     jupyter nbextension install --py jupytext && \
     jupyter nbextension enable --py jupytext && \
     echo '[ ! -z "$TERM" -a -r /etc/motd ] && cat /etc/motd' >> /etc/bash.bashrc && \
-    cat /opt/odahuflow/odahuflow-doc.txt > /etc/motd
+    cat /opt/odahu-flow/odahuflow-doc.txt > /etc/motd
 
 COPY containers/jupyterlab/jupyter_notebook_config.py /etc/jupyter/
+
+# Replace build working directory with empty directory
+RUN mkdir -p "${WORK_DIR}/workdir"
+WORKDIR "${WORK_DIR}/workdir"

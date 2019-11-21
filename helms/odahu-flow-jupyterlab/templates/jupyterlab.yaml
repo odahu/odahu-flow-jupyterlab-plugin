@@ -18,24 +18,16 @@ spec:
     spec:
       containers:
       - name: jupyterlab
-        image: "{{ include "odahuflow.image-name" (dict "root" . "service" .Values.jupyterlab "tpl" "%sodahuflow-jupyterlab:%s") }}"
+        image: "{{ include "odahuflow.image-name" (dict "root" . "service" .Values.jupyterlab "tpl" "%sodahu-flow-jupyterlab:%s") }}"
         resources:
           {{- toYaml .Values.jupyterlab.resources | nindent 10 }}
         env:
-        - name: METRICS_UI_URL
-          value: https://{{ include "odahuflow.ingress-domain-name" (dict "local" .Values.jupyterlab.ingress "root" . "tpl" "mlflow.%s") }}
         - name: JUPYTER_PORT
           value: {{ .Values.jupyterlab.port | quote }}
         - name: JUPYTER_DISABLE_TOKEN
           value: "yes"
         - name: DEFAULT_EDI_ENDPOINT
-          value: https://{{ include "odahuflow.ingress-domain-name" (dict "local" .Values.jupyterlab.ingress "root" . "tpl" "edi.%s") }}
-        - name: SERVICE_CATALOG_URL
-          value: https://{{ include "odahuflow.ingress-domain-name" (dict "local" .Values.jupyterlab.ingress "root" . "tpl" "edge.%s") }}
-        - name: MLFLOW_TRACKING_URI
-          value: http://mlflow.{{ .Release.Namespace }}.svc.cluster.local
-        - name: GRAFANA_URL
-          value: https://{{ include "odahuflow.ingress-domain-name" (dict "local" .Values.jupyterlab.ingress "root" . "tpl" "grafana.%s") }}
+          value: https://{{ include "odahuflow.ingress-domain-name" (dict "local" .Values.jupyterlab.ingress "root" . "tpl" "%s") }}
         ports:
         - containerPort: {{ .Values.jupyterlab.port }}
           name: input
@@ -43,10 +35,10 @@ spec:
         - containerPort: {{ .Values.jupyterlab.port }}
           name: input-udp
           protocol: UDP
-        command: ["jupyter", "lab"]
+        command: ["jupyter", "lab", "--LabApp.base_url={{ .Values.jupyterlab.ingress.path }}"]
         livenessProbe:
           httpGet:
-              path: /
+              path: {{ .Values.jupyterlab.ingress.path }}
               port: {{ .Values.jupyterlab.port }}
           initialDelaySeconds: 10
           timeoutSeconds: 10
@@ -83,16 +75,17 @@ metadata:
   name: "{{ .Release.Name }}-jupyterlab"
 spec:
   rules:
-    - host: {{ include "odahuflow.ingress-domain-name" (dict "local" .Values.jupyterlab.ingress "root" . "tpl" "jupyterlab.%s") }}
+    - host: {{ include "odahuflow.ingress-domain-name" (dict "local" .Values.jupyterlab.ingress "root" . "tpl" "%s") }}
       http:
         paths:
           - backend:
               serviceName: "{{ .Release.Name }}-jupyterlab"
               servicePort: {{ .Values.jupyterlab.port }}
+            path: "{{ .Values.jupyterlab.ingress.path }}"
   {{- if (ternary $.Values.jupyterlab.ingress.tlsEnabled $.Values.ingress.tlsEnabled (hasKey $.Values.jupyterlab.ingress "tlsEnabled")) }}
   tls:
   - hosts:
-    - {{ include "odahuflow.ingress-domain-name" (dict "local" .Values.jupyterlab.ingress "root" . "tpl" "jupyterlab.%s") | quote }}
+    - {{ include "odahuflow.ingress-domain-name" (dict "local" .Values.jupyterlab.ingress "root" . "tpl" "%s") | quote }}
     secretName: {{ include "odahuflow.ingress-tls-secret-name" (dict "local" .Values.jupyterlab.ingress "root" . ) | quote }}
   {{- end }}
 {{- end }}
