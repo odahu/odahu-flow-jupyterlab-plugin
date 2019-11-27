@@ -120,7 +120,7 @@ pipeline {
         stage("Build Docker images & Run Tests") {
             steps {
                 script {
-                    cicdLibrary.buildLegionImage('odahuflow-jupyterlab', '.', 'containers/jupyterlab/Dockerfile')
+                    cicdLibrary.buildLegionImage('odahu-flow-jupyterlab', '.', 'containers/jupyterlab/Dockerfile')
                 }
             }
         }
@@ -150,7 +150,7 @@ pipeline {
                 stage("Upload Jupyterlab Docker image"){
                     steps {
                         script {
-                            cicdLibrary.uploadDockerImage('odahuflow-jupyterlab', env.param_stable_release.toBoolean()  && env.param_dockerhub_publishing_enabled.toBoolean())
+                            cicdLibrary.uploadDockerImage('odahu-flow-jupyterlab', env.param_stable_release.toBoolean()  && env.param_dockerhub_publishing_enabled.toBoolean())
                         }
                     }
                 }

@@ -19,7 +19,7 @@ import sys
 
 PORT = os.getenv('JUPYTER_PORT')
 if not PORT:
-    print('Environment variable JUPYTER_PORT is not defined. It looks like your odahuflow-activate.sh is corrupted')
+    print('Environment variable JUPYTER_PORT is not defined. It looks like your odahu-flow-activate.sh is corrupted')
     sys.exit(1)
 
 PORT = int(PORT)
@@ -77,7 +77,7 @@ c.NotebookApp.port_retries = 0
 c.NotebookApp.contents_manager_class = "jupytext.TextFileContentsManager"
 c.ContentsManager.notebook_extensions = "ipynb,py"
 
-c.JupyterLabTemplates.template_dirs = ['/opt/odahuflow/templates']
+c.JupyterLabTemplates.template_dirs = ['/opt/odahu-flow/templates']
 c.JupyterLabTemplates.include_default = True
 
 JUPYTER_DISABLE_TOKEN = os.getenv('JUPYTER_DISABLE_TOKEN')

@@ -43,7 +43,7 @@ def extract_version() -> str:
             raise RuntimeError("Unable to find version string in %s." % (file_content,))
 
 setup(
-    name='odahuflow-jupyterlab-plugin',
+    name='odahu-flow-jupyterlab-plugin',
     description='A JupyterLab Notebook server extension for jupyter_odahuflow',
     author='Vlad Tokarev, Vitalik Solodilov',
     author_email='vlad.tokarev.94@gmail.com, mcdkr@yandex.ru',
@@ -53,7 +53,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
     ],
-    keywords='odahuflow jupyterlab',
+    keywords='odahu-flow jupyterlab',
     python_requires='>=3.6',
     packages=find_namespace_packages(),
     data_files=[('', ["README.md"])],
@@ -61,7 +61,7 @@ setup(
     version=extract_version(),
     install_requires=[
         # TODO: change to PyPi when we publish release
-        'odahuflow-sdk @ git+https://github.com/odahu/odahu-flow@feat/1079-migration#egg=odahuflow-sdk&subdirectory=odahuFlow/sdk',
+        'odahu-flow-sdk @ git+https://github.com/odahu/odahu-flow@1.0.0-rc27#egg=odahu-flow-sdk&subdirectory=packages/sdk',
         'notebook>=5.7.8',
         'pydantic==0.32.2',
         'jupyterlab<=0.35.6'

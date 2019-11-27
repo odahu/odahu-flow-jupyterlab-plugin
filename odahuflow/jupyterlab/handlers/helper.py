@@ -20,7 +20,7 @@ import functools
 
 from tornado.web import HTTPError
 
-from odahuflow.sdk.clients.edi import EDIConnectionException, IncorrectAuthorizationToken
+from odahuflow.sdk.clients.api import APIConnectionException, IncorrectAuthorizationToken
 
 ODAHUFLOW_X_JWT_TOKEN = 'X-Jwt'
 DEFAULT_EDI_ENDPOINT = 'DEFAULT_EDI_ENDPOINT'
@@ -41,7 +41,7 @@ def decorate_handler_for_exception(function):
             return function(*args, **kwargs)
         except IncorrectAuthorizationToken as base_exception:
             raise HTTPError(log_message=str(base_exception), status_code=403) from base_exception
-        except EDIConnectionException as base_exception:
+        except APIConnectionException as base_exception:
             raise HTTPError(log_message=str(base_exception)) from base_exception
     return wrapper
 
@@ -59,7 +59,7 @@ def decorate_async_handler_for_exception(function):
             return await function(*args, **kwargs)
         except IncorrectAuthorizationToken as base_exception:
             raise HTTPError(log_message=str(base_exception), status_code=403) from base_exception
-        except EDIConnectionException as base_exception:
+        except APIConnectionException as base_exception:
             raise HTTPError(log_message=str(base_exception)) from base_exception
     return wrapper
 

@@ -60,16 +60,16 @@ docker-build-jupyterlab:
 
 ## docker-push-jupyterlab: Push python toolchain docker image
 docker-push-jupyterlab:  check-tag
-	docker tag odahu/jupyterlab:${BUILD_TAG} ${DOCKER_REGISTRY}/odahuflow/jupyterlab:${TAG}
+	docker tag odahu/jupyterlab:${BUILD_TAG} ${DOCKER_REGISTRY}/odahu/jupyterlab:${TAG}
 	docker push ${DOCKER_REGISTRY}/odahu/jupyterlab:${TAG}
 
-## helm-install: Install the odahuflow jupyterlab helm chart from source code
+## helm-install: Install the odahu-flow jupyterlab helm chart from source code
 helm-install: helm-delete
-	helm install helms/jupyterlab --atomic --wait --timeout 320 --namespace odahuflow --name odahuflow-jupyterlab --debug ${HELM_ADDITIONAL_PARAMS}
+	helm install helms/jupyterlab --atomic --wait --timeout 320 --namespace odahu-flow --name odahu-flow-jupyterlab --debug ${HELM_ADDITIONAL_PARAMS}
 
-## helm-delete: Delete the odahuflow helm release
+## helm-delete: Delete the odahu-flow helm release
 helm-delete:
-	helm delete --purge odahuflow-jupyterlab || true
+	helm delete --purge odahu-flow-jupyterlab || true
 
 ## install-unittests: Install unit tests
 install-unittests:
@@ -102,9 +102,9 @@ unittests:
 
 ## run-sandbox: Start Python toolchain sandbox
 run-sandbox:
-	odahuflowctl sandbox --image odahuflow/jupyterlab:${BUILD_TAG}
+	odahuflowctl sandbox --image odahu/jupyterlab:${BUILD_TAG}
 
-	./odahuflow-activate.sh
+	./odahu-flow-activate.sh
 
 ## install-vulnerabilities-checker: Install the vulnerabilities-checker
 install-vulnerabilities-checker:

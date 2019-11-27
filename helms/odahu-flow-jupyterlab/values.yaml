@@ -55,7 +55,7 @@ security:
   # Type of authorization. Currently only oauth2_proxy is supported
   # Valid values are:
   # - oauth2_proxy
-  integration: oauth2_proxy
+  integration: ""
 
   # Detail configuration of oauth2_proxy
   oauth2_proxy:
@@ -129,3 +129,7 @@ jupyterlab:
     # To use specific value, replace ~ with target value
     # Type: string
     # tlsSecretName: ~
+
+    # Match the content of an incoming request before the load balancer directs traffic to the referenced Service.
+    # Type: string
+    path: /jupyterlab
