@@ -1,5 +1,5 @@
 {
-  "name": "odahuflow-jupyterlab-plugin",
+  "name": "odahu-flow-jupyterlab-plugin",
   "version": "0.1.0",
   "description": "Integration with Legion Platform (Cluster mode only)",
   "keywords": [
