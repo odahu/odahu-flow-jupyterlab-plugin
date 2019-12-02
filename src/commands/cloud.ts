@@ -364,7 +364,7 @@ export function addCommands(options: IAddCloudCommandsOptions) {
         if (name) {
           const widget = options.trainingLogs.getOrConstruct(name);
           if (!widget.isAttached) {
-            options.app.shell.addToMainArea(widget);
+            options.app.shell.add(widget, 'main');
           }
           options.app.shell.activateById(widget.id);
         } else {
@@ -403,7 +403,7 @@ export function addCommands(options: IAddCloudCommandsOptions) {
         if (name) {
           const widget = options.packagingLogs.getOrConstruct(name);
           if (!widget.isAttached) {
-            options.app.shell.addToMainArea(widget);
+            options.app.shell.add(widget, 'main');
           }
           options.app.shell.activateById(widget.id);
         }

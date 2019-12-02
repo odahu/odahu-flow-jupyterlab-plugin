@@ -1,12 +1,20 @@
 {
-  "name": "odahuflow-jupyterlab-plugin",
-  "version": "0.1.0",
+  "name": "odahu-flow-jupyterlab-plugin",
+  "version": "1.0.0",
   "description": "Integration with Legion Platform (Cluster mode only)",
   "keywords": [
     "jupyter",
     "jupyterlab",
     "jupyterlab-extension"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/odahu/odahu-flow-jupyterlab-plugin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/odahu/odahu-flow-jupyterlab-plugin/issues"
+  },
+  "homepage": "https://github.com/odahu/odahu-flow-jupyterlab-plugin",
   "license": "Apache-2.0",
   "author": "Vlad Tokarev, Vitalik Solodilov",
   "files": [
@@ -26,42 +34,41 @@
     "tslint-check": "tslint-config-prettier-check ./tslint.json"
   },
   "dependencies": {
-    "@jupyterlab/application": "^0.19.1",
-    "@jupyterlab/apputils": "^0.19.1",
-    "@jupyterlab/console": "^0.19.1",
-    "@jupyterlab/coreutils": "^2.0.2",
-    "@jupyterlab/filebrowser": "^0.19.1",
-    "@jupyterlab/launcher": "^0.19.1",
-    "@jupyterlab/mainmenu": "^0.8.1",
-    "@jupyterlab/services": "^3.1.0",
-    "@jupyterlab/terminal": "^0.19.1",
-    "@jupyterlab/theming": "^0.9.0",
-    "@phosphor/widgets": "^1.6.0",
+    "@jupyterlab/application": "^1.1.0",
+    "@jupyterlab/apputils": "^1.1.0",
+    "@jupyterlab/console": "^1.1.0",
+    "@jupyterlab/coreutils": "^3.1.0",
+    "@jupyterlab/filebrowser": "^1.1.0",
+    "@jupyterlab/launcher": "^1.1.0",
+    "@jupyterlab/mainmenu": "^1.1.0",
+    "@jupyterlab/services": "^4.1.0",
+    "@jupyterlab/terminal": "^1.1.0",
+    "@phosphor/widgets": "^1.8.0",
     "identity-obj-proxy": "^3.0.0",
-    "react": "~16.4.2",
-    "react-dom": "~16.4.2",
+    "react": "~16.8.4",
+    "react-dom": "~16.8.4",
     "react-toggle-display": "^2.2.0",
     "typestyle": "^2.0.1"
   },
   "devDependencies": {
     "@types/enzyme": "3.1.15",
-    "@types/jest": "^23.3.5",
-    "@types/react": "~16.4.13",
+    "@types/jest": "^24",
+    "@types/react": "~16.8.13",
     "@types/react-dom": "~16.0.5",
     "enzyme": "3.7.0",
     "enzyme-adapter-react-16": "1.7.0",
     "husky": "1.3.1",
-    "jest": "^23.6.0",
+    "jest": "^24",
     "jest-fetch-mock": "^1.6.6",
     "lint-staged": "8.1.5",
     "prettier": "1.16.4",
     "rimraf": "^2.6.1",
-    "ts-jest": "^23.10.4",
+    "ts-jest": "^24",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "1.18.0",
     "tslint-plugin-prettier": "^2.0.0",
-    "typescript": "~3.1.2",
-    "typescript-tslint-plugin": "0.3.1"
+    "typescript": "~3.5.1",
+    "typescript-tslint-plugin": "0.5.5"
   },
   "jupyterlab": {
     "extension": true,
@@ -90,6 +97,6 @@
     "singleQuote": true
   },
   "resolutions": {
-    "@types/react": "~16.4.13"
+    "@types/react": "~16.8.4"
   }
 }

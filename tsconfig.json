@@ -1,7 +1,9 @@
 
 {
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "declaration": true,
+    "esModuleInterop": true,
     "noImplicitAny": false,
     "noEmitOnError": true,
     "noUnusedLocals": false,

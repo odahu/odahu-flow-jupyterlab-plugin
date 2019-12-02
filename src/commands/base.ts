@@ -15,7 +15,7 @@
  */
 import { JupyterLab } from '@jupyterlab/application';
 import { ServiceManager } from '@jupyterlab/services';
-import { ISplashScreen, InstanceTracker } from '@jupyterlab/apputils';
+import { ISplashScreen, WidgetTracker } from '@jupyterlab/apputils';
 import { FileBrowser } from '@jupyterlab/filebrowser';
 import { Widget } from '@phosphor/widgets';
 
@@ -68,7 +68,7 @@ export namespace CommandIDs {
 
 export interface IAddCommandsOptions {
   app: JupyterLab;
-  tracker: InstanceTracker<FileBrowser>;
+  tracker: WidgetTracker<FileBrowser>;
   services: ServiceManager;
   api: IOdahuflowApi;
   splash: ISplashScreen;
