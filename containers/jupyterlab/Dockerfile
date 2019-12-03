@@ -14,7 +14,7 @@
 #    limitations under the License.
 #
 # Args to build
-ARG JUPYTERLAB_VERSION=0.35.6
+ARG JUPYTERLAB_VERSION=1.2.3
 
 # Image for building ready-to-distribute plugin frontend
 FROM python:3.6.8-stretch AS plugin-frontend-rebuilder
@@ -51,10 +51,10 @@ COPY jupyter-config "${WORK_DIR}/jupyter-config"
 RUN yarn build && npm pack .
 
 # Run installation w/o any code to warm up nodejs cache
-RUN jupyter lab build && mv /opt/odahu-flow-plugin/odahuflow-jupyterlab-plugin-*.tgz jupyter_odahuflow.tgz
+RUN jupyter lab build && mv /opt/odahu-flow-plugin/odahu-flow-jupyterlab-plugin-*.tgz jupyter_odahuflow.tgz
 
 RUN jupyter labextension install --no-build jupyter_odahuflow.tgz && \
-    jupyter labextension install @jupyterlab/git jupyterlab_toastify jupyterlab-jupytext@0.19
+    jupyter labextension install @jupyterlab/git jupyterlab_toastify jupyterlab-jupytext
 
 # We have to remove folder with node_modules and other build-related staff that is not required for running
 RUN rm -rf /usr/local/share/jupyter/lab/staging
@@ -87,7 +87,7 @@ RUN pip3 install -e .
 
 COPY --from=plugin-frontend-rebuilder /usr/local/share/jupyter /usr/local/share/jupyter
 
-RUN pip3 install jupyterlab-git jupytext==1.1.7 && \
+RUN pip3 install jupyterlab-git jupytext && \
     jupyter serverextension enable --py odahuflow.jupyterlab && \
     jupyter serverextension enable --py jupyterlab_git && \
     jupyter nbextension install --py jupytext && \

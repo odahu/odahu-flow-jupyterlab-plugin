@@ -16,7 +16,7 @@
 import {
   ILayoutRestorer,
   JupyterLab,
-  JupyterLabPlugin
+  JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 import {
   Dialog,
@@ -79,7 +79,7 @@ const pluginRequirements = [
 /**
  * Plugins declarations
  */
-const cloudPlugin: JupyterLabPlugin<IOdahuflowExtension> = {
+const cloudPlugin: JupyterFrontEndPlugin<IOdahuflowExtension> = {
   id: PLUGIN_ID_CLOUD,
   requires: pluginRequirements,
   provides: IOdahuflowExtension,
@@ -91,7 +91,7 @@ const cloudPlugin: JupyterLabPlugin<IOdahuflowExtension> = {
 /**
  * Export the plugins as default.
  */
-const plugins: JupyterLabPlugin<any>[] = [cloudPlugin];
+const plugins: JupyterFrontEndPlugin<any>[] = [cloudPlugin];
 export default plugins;
 
 class BaseOdahuflowExtension {
@@ -166,7 +166,7 @@ export class OdahuflowCloudExtension extends BaseOdahuflowExtension
     this.apiCloudState.onDataChanged.connect(_ => this.sideWidget.refresh());
 
     restorer.add(this.sideWidget, 'odahuflow-cloud-sessions');
-    app.shell.addToLeftArea(this.sideWidget, { rank: 210 });
+    app.shell.add(this.sideWidget, 'left', { rank: 210 });
 
     app.restored.then(() => {
       this.api.configuration

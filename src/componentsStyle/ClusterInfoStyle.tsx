@@ -46,5 +46,8 @@ export const infoPairLine = style({
 export const infoPairTitle = style({
   fontWeight: 600,
   display: 'inline-block',
-  marginRight: 10
+  marginRight: 10,
+  color: 'rgb(85, 26, 139)',
+  fontSize: '13.3333px',
+  textDecoration: 'underline'
 });

@@ -48,7 +48,6 @@ setup(
     author='Vlad Tokarev, Vitalik Solodilov',
     author_email='vlad.tokarev.94@gmail.com, mcdkr@yandex.ru',
     license='Apache v2',
-
     classifiers=[
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
@@ -61,14 +60,14 @@ setup(
     version=extract_version(),
     install_requires=[
         # TODO: change to PyPi when we publish release
-        'odahu-flow-sdk @ git+https://github.com/odahu/odahu-flow@1.0.0-rc27#egg=odahu-flow-sdk&subdirectory=packages/sdk',
-        'notebook>=5.7.8',
+        'odahu-flow-sdk @ git+https://github.com/odahu/odahu-flow@1.0.0-rc29#egg=odahu-flow-sdk&subdirectory=packages/sdk',
+        'notebook',
         'pydantic==0.32.2',
-        'jupyterlab<=0.35.6'
     ],
     extras_require={
         'testing': [
-            'pylint>=2.3.0'
+            'pylint>=2.3.0',
+            'jupyterlab~=1.1'
         ]
     },
 )
