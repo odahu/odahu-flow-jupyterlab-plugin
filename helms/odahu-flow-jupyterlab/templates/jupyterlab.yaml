@@ -26,7 +26,7 @@ spec:
           value: {{ .Values.jupyterlab.port | quote }}
         - name: JUPYTER_DISABLE_TOKEN
           value: "yes"
-        - name: DEFAULT_EDI_ENDPOINT
+        - name: DEFAULT_API_ENDPOINT
           value: https://{{ include "odahuflow.ingress-domain-name" (dict "local" .Values.jupyterlab.ingress "root" . "tpl" "%s") }}
         ports:
         - containerPort: {{ .Values.jupyterlab.port }}

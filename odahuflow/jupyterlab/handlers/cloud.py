@@ -23,7 +23,7 @@ from tornado.web import HTTPError
 
 from odahuflow.jupyterlab.handlers.base import BaseOdahuflowHandler
 from odahuflow.jupyterlab.handlers.datamodels.cloud import *  # pylint: disable=W0614, W0401
-from odahuflow.jupyterlab.handlers.helper import decorate_handler_for_exception, DEFAULT_EDI_ENDPOINT, \
+from odahuflow.jupyterlab.handlers.helper import decorate_handler_for_exception, DEFAULT_API_ENDPOINT, \
     decorate_async_handler_for_exception
 from odahuflow.sdk.clients.configuration import AsyncConfigurationClient
 from odahuflow.sdk.clients.connection import AsyncConnectionClient
@@ -64,7 +64,7 @@ class BaseCloudOdahuflowHandler(BaseOdahuflowHandler):
         :param target_client_class: target client's class
         :return: instance of target_client_class class
         """
-        default_api_url = os.getenv(DEFAULT_EDI_ENDPOINT, '')
+        default_api_url = os.getenv(DEFAULT_API_ENDPOINT, '')
         jwt_header = self.get_token_from_header()
 
         api_url = self.request.headers.get(ODAHUFLOW_CLOUD_CREDENTIALS_EDI, '')

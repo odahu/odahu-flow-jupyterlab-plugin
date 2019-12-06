@@ -82,6 +82,7 @@ RUN  pip install --disable-pip-version-check --upgrade pip==19.2.2 pipenv==2018.
 COPY containers/jupyterlab/odahuflow-doc.txt /opt/odahu-flow/
 COPY containers/jupyterlab/conda-update.sh /usr/bin/conda-update
 
+ARG PIP_EXTRA_INDEX_URL
 COPY ./ "${WORK_DIR}/"
 RUN pip3 install -e .
 
