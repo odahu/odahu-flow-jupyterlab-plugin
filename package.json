@@ -20,7 +20,7 @@
     "react-toggle-display": "^2.2.0",
     "typestyle": "^2.0.1"
   },
-  "description": "Integration with Legion Platform (Cluster mode only)",
+  "description": "Integration with Odahu Platform",
   "devDependencies": {
     "@types/enzyme": "3.1.15",
     "@types/jest": "^24",

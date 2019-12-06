@@ -47,7 +47,7 @@ class ConfigurationProviderHandler(BaseOdahuflowHandler):
             'oauth2AuthorizationIsEnabled': bool(config.JUPYTER_REDIRECT_URL) and bool(
                 config.ODAHUFLOWCTL_OAUTH_AUTH_URL),
             'idToken': self.get_cookie(ODAHUFLOW_OAUTH_TOKEN_COOKIE_NAME, ''),
-            'tokenProvided': cast_bool(os.getenv(API_AUTH_ENABLED, 'true')) and bool(self.get_token_from_header()),
+            'tokenProvided': not cast_bool(os.getenv(API_AUTH_ENABLED, 'true')) or bool(self.get_token_from_header()),
             'defaultEDIEndpoint': os.getenv(DEFAULT_API_ENDPOINT, ''),
             'odahuflowResourceExamples': sorted(get_odahuflow_template_names()),
         })
