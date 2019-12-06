@@ -18,9 +18,11 @@ Configuration handler
 """
 import os
 
+from odahuflow.sdk.config import cast_bool
+
 from odahuflow.jupyterlab.handlers.base import BaseOdahuflowHandler
 from odahuflow.jupyterlab.handlers.helper import decorate_handler_for_exception, \
-    DEFAULT_EDI_ENDPOINT, ODAHUFLOW_OAUTH_TOKEN_COOKIE_NAME
+    DEFAULT_API_ENDPOINT, ODAHUFLOW_OAUTH_TOKEN_COOKIE_NAME, API_AUTH_ENABLED
 from odahuflow.sdk import config
 from odahuflow.sdk.clients.templates import get_odahuflow_template_names, get_odahuflow_template_content
 
@@ -45,8 +47,8 @@ class ConfigurationProviderHandler(BaseOdahuflowHandler):
             'oauth2AuthorizationIsEnabled': bool(config.JUPYTER_REDIRECT_URL) and bool(
                 config.ODAHUFLOWCTL_OAUTH_AUTH_URL),
             'idToken': self.get_cookie(ODAHUFLOW_OAUTH_TOKEN_COOKIE_NAME, ''),
-            'tokenProvided': bool(self.get_token_from_header()),
-            'defaultEDIEndpoint': os.getenv(DEFAULT_EDI_ENDPOINT, ''),
+            'tokenProvided': cast_bool(os.getenv(API_AUTH_ENABLED, 'true')) and bool(self.get_token_from_header()),
+            'defaultEDIEndpoint': os.getenv(DEFAULT_API_ENDPOINT, ''),
             'odahuflowResourceExamples': sorted(get_odahuflow_template_names()),
         })
 

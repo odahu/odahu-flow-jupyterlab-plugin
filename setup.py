@@ -60,7 +60,7 @@ setup(
     version=extract_version(),
     install_requires=[
         # TODO: change to PyPi when we publish release
-        'odahu-flow-sdk @ git+https://github.com/odahu/odahu-flow@1.0.0-rc29#egg=odahu-flow-sdk&subdirectory=packages/sdk',
+        'odahu-flow-sdk==1.0.0rc32',
         'notebook',
         'pydantic==0.32.2',
     ],

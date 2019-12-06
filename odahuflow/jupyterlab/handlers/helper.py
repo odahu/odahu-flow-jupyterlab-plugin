@@ -23,7 +23,8 @@ from tornado.web import HTTPError
 from odahuflow.sdk.clients.api import APIConnectionException, IncorrectAuthorizationToken
 
 ODAHUFLOW_X_JWT_TOKEN = 'X-Jwt'
-DEFAULT_EDI_ENDPOINT = 'DEFAULT_EDI_ENDPOINT'
+DEFAULT_API_ENDPOINT = 'DEFAULT_API_ENDPOINT'
+API_AUTH_ENABLED = 'API_AUTH_ENABLED'
 ODAHUFLOW_OAUTH_TOKEN_COOKIE_NAME = '_odahuflow_oauth_token'
 ODAHUFLOW_OAUTH_STATE_COOKIE_NAME = '_odahuflow_oauth_state'
 
