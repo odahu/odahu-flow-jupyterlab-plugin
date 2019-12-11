@@ -38,6 +38,6 @@ matrix:
     #####################
     ### DOCKER IMAGES ###
     #####################
-    - language: bash
-      script:
-        - make docker-build-jupyterlab
+    # - language: bash
+    #   script:
+    #     - make docker-build-notebooks

@@ -17,7 +17,6 @@ pipeline {
         /*
         Job parameters
         */
-        pathToCharts = "${WORKSPACE}/helms"
         sharedLibPath = "legion-cicd/pipelines/legionPipeline.groovy"
         //Git Branch to build package from
         param_git_branch = "${params.GitBranch}"
@@ -31,7 +30,7 @@ pipeline {
         param_release_version = "${params.ReleaseVersion}"
         //Push release git tag
         param_push_git_tag = "${params.PushGitTag}"
-        //Rewrite git tag i exists
+        //Rewrite git tag if exists
         param_force_tag_push = "${params.ForceTagPush}"
         param_update_version_string = "${params.UpdateVersionString}"
         param_update_master = "${params.UpdateMaster}"
@@ -47,13 +46,6 @@ pipeline {
         param_legion_cicd_repo = "${params.LegionCicdRepo}"
         //Legion repo branch (tag or branch name)
         param_legion_cicd_branch = "${params.LegionCicdBranch}"
-
-        /*
-        Helm
-        */
-        param_helm_repo_git_url = "${params.HelmRepoGitUrl}"
-        param_helm_repo_git_branch = "${params.HelmRepoGitBranch}"
-        param_helm_repository = "${params.HelmRepository}"
 
         /*
         Docker
@@ -87,9 +79,7 @@ pipeline {
                 cleanWs()
                 checkout scm
                 script {
-                    sh 'echo RunningOn: $(curl http://checkip.amazonaws.com/)'
-
-                    // import Legion components
+                    // import CI/CD components
                     sshagent(["${env.legionCicdGitlabKey}"]) {
                         print("Checkout Legion-cicd repo")
                         sh """#!/bin/bash -ex
@@ -113,14 +103,6 @@ pipeline {
             }
         }
 
-        stage("Build Docker images & Run Tests") {
-            steps {
-                script {
-                    cicdLibrary.buildDockerImage('odahu-flow-jupyterlab', '.', 'containers/jupyterlab/Dockerfile')
-                }
-            }
-        }
-
         stage('Upload artifacts') {
             parallel {
                 stage("Upload PyPi Legion packages") {
@@ -137,19 +119,47 @@ pipeline {
                         }
                     }
                 }
-                stage('Package and upload helm charts') {
-                    steps {
-                        script {
-                            cicdLibrary.uploadHelmCharts(env.pathToCharts)
-                        }
-                    }
+            }
+        }
+
+        stage("Build and upload notebooks Docker images") {
+            steps {
+                script {
+                    def buildArgs = """--build-arg NPM_EXTRA_INDEX_URL=https://${env.param_npm_private_url}
+                                       --build-arg ODAHU_PLUGIN_VERSION=${Globals.buildVersion}
+                                    """
+                    cicdLibrary.buildDockerImage(
+                        'base-notebook',
+                        '.',
+                        'containers/jupyter-stacks/Dockerfile',
+                        "${buildArgs} --build-arg NOTEBOOK_TYPE=base".replaceAll("\\s+"," ")
+                    )
+                    cicdLibrary.buildDockerImage(
+                        'datascience-notebook',
+                        '.',
+                        'containers/jupyter-stacks/Dockerfile',
+                        "${buildArgs} --build-arg NOTEBOOK_TYPE=datascience".replaceAll("\\s+"," ")
+                    )
+                    cicdLibrary.buildDockerImage(
+                        'tensorflow-notebook',
+                        '.',
+                        'containers/jupyter-stacks/Dockerfile',
+                        "${buildArgs} --build-arg NOTEBOOK_TYPE=tensorflow".replaceAll("\\s+"," ")
+                    )
                 }
-                stage("Upload Jupyterlab Docker image") {
-                    steps {
-                        script {
-                            cicdLibrary.uploadDockerImage('odahu-flow-jupyterlab', env.param_stable_release.toBoolean() && env.param_dockerhub_publishing_enabled.toBoolean())
-                        }
-                    }
+                script {
+                    cicdLibrary.uploadDockerImage(
+                        'base-notebook',
+                        env.param_stable_release.toBoolean() && env.param_dockerhub_publishing_enabled.toBoolean()
+                    )
+                    cicdLibrary.uploadDockerImage(
+                        'datascience-notebook',
+                        env.param_stable_release.toBoolean() && env.param_dockerhub_publishing_enabled.toBoolean()
+                    )
+                    cicdLibrary.uploadDockerImage(
+                        'tensorflow-notebook',
+                        env.param_stable_release.toBoolean() && env.param_dockerhub_publishing_enabled.toBoolean()
+                    )
                 }
             }
         }
