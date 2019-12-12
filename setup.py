@@ -61,7 +61,7 @@ setup(
     install_requires=[
         'odahu-flow-sdk==1.0.0rc32',
         'notebook',
-        'pydantic==0.32.2',
+        'pydantic>=1.2',
     ],
     extras_require={
         'testing': [
