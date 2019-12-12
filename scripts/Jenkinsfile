@@ -38,11 +38,11 @@ pipeline {
         param_stable_release = "${params.StableRelease}"
 
         /*
-        CICD repository
+        CI/CD repository
         */
         legionCicdGitlabKey = "${params.legionCicdGitlabKey}"
         param_git_deploy_key = "${params.GitDeployKey}"
-        //Legion CICD repo url (for pipeline methods import)
+        //CI/CD repo url (for pipeline methods import)
         param_legion_cicd_repo = "${params.LegionCicdRepo}"
         //Legion repo branch (tag or branch name)
         param_legion_cicd_branch = "${params.LegionCicdBranch}"
@@ -81,7 +81,7 @@ pipeline {
                 script {
                     // import CI/CD components
                     sshagent(["${env.legionCicdGitlabKey}"]) {
-                        print("Checkout Legion-cicd repo")
+                        print("Checkout CI/CD repo")
                         sh """#!/bin/bash -ex
                         mkdir -p \$(getent passwd \$(whoami) | cut -d: -f6)/.ssh && ssh-keyscan git.epam.com >> \$(getent passwd \$(whoami) | cut -d: -f6)/.ssh/known_hosts
                         if [ ! -d "legion-cicd" ]; then
@@ -90,7 +90,7 @@ pipeline {
                         cd legion-cicd && git checkout ${env.param_legion_cicd_branch}
                         """
 
-                        print("Load legion pipeline common library")
+                        print("Load common CI/CD pipeline library")
                         cicdLibrary = load "${env.sharedLibPath}"
                     }
 
@@ -105,14 +105,14 @@ pipeline {
 
         stage('Upload artifacts') {
             parallel {
-                stage("Upload PyPi Legion packages") {
+                stage("Upload ODAHU PyPi packages") {
                     steps {
                         script {
                             cicdLibrary.publishPythonPackage("./", env.param_pypi_private_creds, env.param_pypi_private_url, env.param_pypi_publishing_enabled, env.param_pypi_public_creds, env.param_pypi_public_url)
                         }
                     }
                 }
-                stage('Upload NPM Legion packages') {
+                stage('Upload ODAHU NPM packages') {
                     steps {
                         script {
                             cicdLibrary.publishNpmPackage("./", env.param_npm_private_creds, env.param_npm_private_url, env.param_npm_publishing_enabled, env.param_npm_public_creds, env.param_npm_public_url)
@@ -122,31 +122,37 @@ pipeline {
             }
         }
 
-        stage("Build and upload notebooks Docker images") {
+        stage("Build Docker images for notebooks") {
             steps {
                 script {
                     def buildArgs = """--build-arg NPM_EXTRA_INDEX_URL=https://${env.param_npm_private_url}
                                        --build-arg ODAHU_PLUGIN_VERSION=${Globals.buildVersion}
-                                    """
+                                    """.replaceAll("\\s+"," ")
+
                     cicdLibrary.buildDockerImage(
                         'base-notebook',
                         '.',
                         'containers/jupyter-stacks/Dockerfile',
-                        "${buildArgs} --build-arg NOTEBOOK_TYPE=base".replaceAll("\\s+"," ")
+                        "${buildArgs} --build-arg NOTEBOOK_TYPE=base"
                     )
                     cicdLibrary.buildDockerImage(
                         'datascience-notebook',
                         '.',
                         'containers/jupyter-stacks/Dockerfile',
-                        "${buildArgs} --build-arg NOTEBOOK_TYPE=datascience".replaceAll("\\s+"," ")
+                        "${buildArgs} --build-arg NOTEBOOK_TYPE=datascience"
                     )
                     cicdLibrary.buildDockerImage(
                         'tensorflow-notebook',
                         '.',
                         'containers/jupyter-stacks/Dockerfile',
-                        "${buildArgs} --build-arg NOTEBOOK_TYPE=tensorflow".replaceAll("\\s+"," ")
+                        "${buildArgs} --build-arg NOTEBOOK_TYPE=tensorflow"
                     )
                 }
+            }
+        }
+
+        stage("Upload built Docker images to registry") {
+            steps {
                 script {
                     cicdLibrary.uploadDockerImage(
                         'base-notebook',
