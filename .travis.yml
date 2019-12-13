@@ -35,9 +35,3 @@ matrix:
         - yarn install --non-interactive --ignore-scripts
         - yarn build
         - yarn lint
-    #####################
-    ### DOCKER IMAGES ###
-    #####################
-    - language: bash
-      script:
-        - make docker-build-jupyterlab

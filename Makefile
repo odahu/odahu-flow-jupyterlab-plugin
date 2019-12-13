@@ -12,7 +12,6 @@ SANDBOX_PYTHON_TOOLCHAIN_IMAGE=
 ROBOT_FILES=**/*.robot
 ROBOT_THREADS=6
 ROBOT_OPTIONS=-e disable
-CLUSTER_NAME=
 E2E_PYTHON_TAGS=
 COMMIT_ID=
 TEMP_DIRECTORY=
@@ -27,12 +26,6 @@ MOCKS_DIR=target/mocks
 SWAGGER_FILE=
 TS_MODEL_DIR=src/odahuflow
 SWAGGER_CODEGEN_BIN=java -jar swagger-codegen-cli.jar
-
-HIERA_KEYS_DIR=
-ODAHUFLOW_PROFILES_DIR=
-
-CLUSTER_NAME=
-CLOUD_PROVIDER=
 
 -include .env
 
@@ -54,22 +47,23 @@ check-tag:
 install-jupyterlab-plugin:
 	pip3 install ${BUILD_PARAMS} -e .
 
-## docker-build-python-toolchain: Build python toolchain docker image
-docker-build-jupyterlab:
-	docker build -t odahu/jupyterlab:${BUILD_TAG} -f containers/jupyterlab/Dockerfile .
+## docker-build-notebook: Builds docker image with provided parameters
+docker-build-notebook.%:
+	docker build -t odahu/$*-notebook:${BUILD_TAG} \
+	--build-arg NOTEBOOK_TYPE=$* \
+	--build-arg ODAHU_PLUGIN_VERSION=${BUILD_TAG} \
+	-f containers/jupyter-stacks/Dockerfile .
 
-## docker-push-jupyterlab: Push python toolchain docker image
-docker-push-jupyterlab:  check-tag
-	docker tag odahu/jupyterlab:${BUILD_TAG} ${DOCKER_REGISTRY}/odahu/jupyterlab:${TAG}
-	docker push ${DOCKER_REGISTRY}/odahu/jupyterlab:${TAG}
+## docker-build-all-notebooks: Build all necessary types of docker images with ODAHU JupyterLab plugin
+docker-build-all-notebooks:  docker-build-notebook.base docker-build-notebook.tensorflow docker-build-notebook.datascience
 
-## helm-install: Install the odahu-flow jupyterlab helm chart from source code
-helm-install: helm-delete
-	helm install helms/jupyterlab --atomic --wait --timeout 320 --namespace odahu-flow --name odahu-flow-jupyterlab --debug ${HELM_ADDITIONAL_PARAMS}
+## docker-push-notebook: Pushes docker image into the registry
+docker-push-notebook.%:  check-tag
+	docker tag odahu/$*-notebook:${BUILD_TAG} ${DOCKER_REGISTRY}/odahu/$*-notebook:${TAG}
+	docker push ${DOCKER_REGISTRY}/odahu/$*-notebook:${TAG}
 
-## helm-delete: Delete the odahu-flow helm release
-helm-delete:
-	helm delete --purge odahu-flow-jupyterlab || true
+## docker-push-all-notebooks: Pushes all the listed docker images into the registry
+docker-push-all-notebooks:  docker-push-notebook.base docker-push-notebook.tensorflow docker-push-notebook.datascience
 
 ## install-unittests: Install unit tests
 install-unittests:
@@ -99,12 +93,6 @@ unittests:
 	mkdir -p target
 	mkdir -p target/cover
 	DEBUG=true VERBOSE=true pytest packagers/rest
-
-## run-sandbox: Start Python toolchain sandbox
-run-sandbox:
-	odahuflowctl sandbox --image odahu/jupyterlab:${BUILD_TAG}
-
-	./odahu-flow-activate.sh
 
 ## install-vulnerabilities-checker: Install the vulnerabilities-checker
 install-vulnerabilities-checker:

@@ -1,8 +1,0 @@
-===================================
- Odahu-flow Python toolchain container
-===================================
-
-Main aim of this container - to provide you a way to run your model training on local machine.
-
-1. To run jupyter lab use "jupyter lab" command
-2. To run jupyter notebook use "jupyter notebook" command
