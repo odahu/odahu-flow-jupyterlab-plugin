@@ -107,14 +107,14 @@ pipeline {
 
         stage('Build ODAHU artifacts') {
             parallel {
-                stage("PyPi packages") {
+                stage("Publish PyPi packages") {
                     steps {
                         script {
                             cicdLibrary.publishPythonPackage("./", env.param_pypi_private_creds, env.param_pypi_private_url, env.param_pypi_publishing_enabled, env.param_pypi_public_creds, env.param_pypi_public_url)
                         }
                     }
                 }
-                stage('NPM packages') {
+                stage('Publish NPM packages') {
                     steps {
                         script {
                             cicdLibrary.publishNpmPackage("./", env.param_npm_private_creds, env.param_npm_private_url, env.param_npm_publishing_enabled, env.param_npm_public_creds, env.param_npm_public_url)
