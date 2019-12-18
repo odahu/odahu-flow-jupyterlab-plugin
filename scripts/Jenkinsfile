@@ -7,6 +7,8 @@ class Globals {
     static String dockerCacheArg = null
 }
 
+def jupyterImgTypes = ['base', 'datascience', 'tensorflow']
+
 pipeline {
     agent { label 'ec2builder' }
 
@@ -129,7 +131,7 @@ pipeline {
                                        --build-arg ODAHU_PLUGIN_VERSION=${Globals.buildVersion}
                                     """.replaceAll("\\s+"," ")
                     def buildStages = [:]
-                    ['base', 'datascience', 'tensorflow'].each { type ->
+                    jupyterImgTypes.each { type ->
                         buildStages[type] = {
                             stage(type) {
                                 cicdLibrary.buildDockerImage(
@@ -150,7 +152,7 @@ pipeline {
             steps {
                 script {
                     def uploadStages = [:]
-                    ['base', 'datascience', 'tensorflow'].each { type ->
+                    jupyterImgTypes.each { type ->
                         uploadStages[type] = {
                             stage(type) {
                                 cicdLibrary.uploadDockerImage(
