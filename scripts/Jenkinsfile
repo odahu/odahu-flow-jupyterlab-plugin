@@ -7,6 +7,8 @@ class Globals {
     static String dockerCacheArg = null
 }
 
+def jupyterImgTypes = ['base', 'datascience', 'tensorflow']
+
 pipeline {
     agent { label 'ec2builder' }
 
@@ -42,9 +44,9 @@ pipeline {
         */
         legionCicdGitlabKey = "${params.legionCicdGitlabKey}"
         param_git_deploy_key = "${params.GitDeployKey}"
-        //CI/CD repo url (for pipeline methods import)
+        // CI/CD repo url (for pipeline methods import)
         param_legion_cicd_repo = "${params.LegionCicdRepo}"
-        //Legion repo branch (tag or branch name)
+        // CI/CD repo branch (tag or branch name)
         param_legion_cicd_branch = "${params.LegionCicdBranch}"
 
         /*
@@ -103,16 +105,16 @@ pipeline {
             }
         }
 
-        stage('Upload artifacts') {
+        stage('Build ODAHU artifacts') {
             parallel {
-                stage("Upload ODAHU PyPi packages") {
+                stage("Publish PyPi packages") {
                     steps {
                         script {
                             cicdLibrary.publishPythonPackage("./", env.param_pypi_private_creds, env.param_pypi_private_url, env.param_pypi_publishing_enabled, env.param_pypi_public_creds, env.param_pypi_public_url)
                         }
                     }
                 }
-                stage('Upload ODAHU NPM packages') {
+                stage('Publish NPM packages') {
                     steps {
                         script {
                             cicdLibrary.publishNpmPackage("./", env.param_npm_private_creds, env.param_npm_private_url, env.param_npm_publishing_enabled, env.param_npm_public_creds, env.param_npm_public_url)
@@ -122,50 +124,45 @@ pipeline {
             }
         }
 
-        stage("Build Docker images for notebooks") {
+        stage("Build Docker images") {
             steps {
                 script {
                     def buildArgs = """--build-arg NPM_EXTRA_INDEX_URL=https://${env.param_npm_private_url}
                                        --build-arg ODAHU_PLUGIN_VERSION=${Globals.buildVersion}
                                     """.replaceAll("\\s+"," ")
-
-                    cicdLibrary.buildDockerImage(
-                        'base-notebook',
-                        '.',
-                        'containers/jupyter-stacks/Dockerfile',
-                        "${buildArgs} --build-arg NOTEBOOK_TYPE=base"
-                    )
-                    cicdLibrary.buildDockerImage(
-                        'datascience-notebook',
-                        '.',
-                        'containers/jupyter-stacks/Dockerfile',
-                        "${buildArgs} --build-arg NOTEBOOK_TYPE=datascience"
-                    )
-                    cicdLibrary.buildDockerImage(
-                        'tensorflow-notebook',
-                        '.',
-                        'containers/jupyter-stacks/Dockerfile',
-                        "${buildArgs} --build-arg NOTEBOOK_TYPE=tensorflow"
-                    )
+                    def buildStages = [:]
+                    jupyterImgTypes.each { type ->
+                        buildStages[type] = {
+                            stage(type) {
+                                cicdLibrary.buildDockerImage(
+                                    "${type}-notebook",
+                                    ".",
+                                    "containers/jupyter-stacks/Dockerfile",
+                                    "${buildArgs} --build-arg NOTEBOOK_TYPE=${type}"
+                                )
+                            }
+                        }
+                    }
+                    parallel buildStages
                 }
             }
         }
 
-        stage("Upload built Docker images to registry") {
+        stage("Publish Docker images") {
             steps {
                 script {
-                    cicdLibrary.uploadDockerImage(
-                        'base-notebook',
-                        env.param_stable_release.toBoolean() && env.param_dockerhub_publishing_enabled.toBoolean()
-                    )
-                    cicdLibrary.uploadDockerImage(
-                        'datascience-notebook',
-                        env.param_stable_release.toBoolean() && env.param_dockerhub_publishing_enabled.toBoolean()
-                    )
-                    cicdLibrary.uploadDockerImage(
-                        'tensorflow-notebook',
-                        env.param_stable_release.toBoolean() && env.param_dockerhub_publishing_enabled.toBoolean()
-                    )
+                    def uploadStages = [:]
+                    jupyterImgTypes.each { type ->
+                        uploadStages[type] = {
+                            stage(type) {
+                                cicdLibrary.uploadDockerImage(
+                                    "${type}-notebook",
+                                    env.param_stable_release.toBoolean() && env.param_dockerhub_publishing_enabled.toBoolean()
+                                )
+                            }
+                        }
+                    }
+                    parallel uploadStages
                 }
             }
         }
