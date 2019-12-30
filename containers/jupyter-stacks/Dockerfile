@@ -7,7 +7,7 @@ ARG JUPYTERLAB_VERSION=1.2.3
 ARG ODAHU_PLUGIN_NAME=odahu-flow-jupyterlab-plugin
 ARG ODAHU_PLUGIN_VERSION=1.0.0-rc35
 ARG PIP_EXTRA_INDEX_URL
-ARG NPM_EXTRA_INDEX_URL
+ARG NPM_EXTRA_INDEX_URL=https://registry.npmjs.org/
 
 SHELL ["/bin/bash", "-c"]
 
@@ -27,8 +27,6 @@ RUN jupyter serverextension enable --sys-prefix --py odahuflow.jupyterlab && \
     jupyter nbextension install --sys-prefix --py jupytext && \
     jupyter nbextension enable --sys-prefix --py jupytext
 
-RUN [[ "${ODAHU_PLUGIN_VERSION}" == *"dev"* ]] \
-    && jupyter labextension install ${NPM_EXTRA_INDEX_URL}/${ODAHU_PLUGIN_NAME}/-/${ODAHU_PLUGIN_NAME}-${ODAHU_PLUGIN_VERSION}.tgz \
-    || jupyter labextension install ${ODAHU_PLUGIN_NAME}@${ODAHU_PLUGIN_VERSION}
+RUN jupyter labextension install ${NPM_EXTRA_INDEX_URL}/${ODAHU_PLUGIN_NAME}/-/${ODAHU_PLUGIN_NAME}-${ODAHU_PLUGIN_VERSION}.tgz
 
 USER $NB_UID
