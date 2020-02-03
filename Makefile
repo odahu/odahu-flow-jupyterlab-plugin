@@ -15,7 +15,7 @@ ROBOT_OPTIONS=-e disable
 E2E_PYTHON_TAGS=
 COMMIT_ID=
 TEMP_DIRECTORY=
-BUILD_TAG=latest
+BUILD_TAG=
 TAG=
 # Example of DOCKER_REGISTRY: nexus.domain.com:443/
 DOCKER_REGISTRY=
@@ -26,6 +26,12 @@ MOCKS_DIR=target/mocks
 SWAGGER_FILE=
 TS_MODEL_DIR=src/odahuflow
 SWAGGER_CODEGEN_BIN=java -jar swagger-codegen-cli.jar
+
+DEFAULT_API_ENDPOINT=
+ODAHUFLOWCTL_OAUTH_AUTH_URL=
+JUPYTER_REDIRECT_URL=
+ODAHUFLOWCTL_OAUTH_CLIENT_ID=
+ODAHUFLOWCTL_OAUTH_CLIENT_SECRET=
 
 -include .env
 
@@ -64,6 +70,16 @@ docker-push-notebook.%:  check-tag
 
 ## docker-push-all-notebooks: Pushes all the listed docker images into the registry
 docker-push-all-notebooks:  docker-push-notebook.base docker-push-notebook.tensorflow docker-push-notebook.datascience
+
+## docker-run-notebook.%: Launch a notebook in a docker container. (base, tensorflow, datascience)
+docker-run-notebook.%:
+	docker run --rm -it -p 8888:8888 \
+	    -e DEFAULT_API_ENDPOINT="${DEFAULT_API_ENDPOINT}" \
+	    -e ODAHUFLOWCTL_OAUTH_AUTH_URL="${ODAHUFLOWCTL_OAUTH_AUTH_URL}" \
+	    -e ODAHUFLOW_OAUTH_CLIENT_ID="${ODAHUFLOW_OAUTH_CLIENT_ID}" \
+	    -e ODAHUFLOW_OAUTH_CLIENT_SECRET="${ODAHUFLOW_OAUTH_CLIENT_SECRET}" \
+	    -e JUPYTER_REDIRECT_URL="${JUPYTER_REDIRECT_URL}" \
+	    odahu/$*-notebook:${BUILD_TAG} "jupyter-lab"
 
 ## install-unittests: Install unit tests
 install-unittests:
