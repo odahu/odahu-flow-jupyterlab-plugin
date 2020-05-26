@@ -57,7 +57,8 @@ export const EXTENSION_ID = 'jupyter.extensions.jupyter_odahuflow';
 const OPEN_COMMAND = 'template:open';
 const FILE_MANAGER_ODAHUFLOW_RESOURCES = [
   '.jp-DirListing-item[title$=".yaml"]',
-  '.jp-DirListing-item[title$=".yml"]'
+  '.jp-DirListing-item[title$=".yml"]',
+  '.jp-DirListing-item[title$=".json"]'
 ];
 const CONDA_FILES = '.jp-DirListing-item[title*="conda.yaml"]';
 const APPLY_ODAHUFLOW_RESOURCES = 100;

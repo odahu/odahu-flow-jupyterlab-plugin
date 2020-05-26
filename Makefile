@@ -32,6 +32,7 @@ ODAHUFLOWCTL_OAUTH_AUTH_URL=
 JUPYTER_REDIRECT_URL=
 ODAHUFLOWCTL_OAUTH_CLIENT_ID=
 ODAHUFLOWCTL_OAUTH_CLIENT_SECRET=
+PIP_BIN=pip3
 
 -include .env
 
@@ -51,7 +52,7 @@ check-tag:
 
 ## install-jupyterlab-plugin: Install python package for JupyterLab
 install-jupyterlab-plugin:
-	pip3 install ${BUILD_PARAMS} -e .
+	${PIP_BIN} install ${BUILD_PARAMS} -e .
 
 ## docker-build-notebook: Builds docker image with provided parameters
 docker-build-notebook.%:
