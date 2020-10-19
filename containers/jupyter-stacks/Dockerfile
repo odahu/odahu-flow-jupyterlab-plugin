@@ -18,10 +18,10 @@ USER root
 
 
 RUN apt-get update && apt-get install -y git unzip groff less curl apt-transport-https ca-certificates lsb-release gnupg && \
-    curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null && \
+    curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | apt-key add - && \
+    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
     echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/azure-cli.list && \
     echo "deb https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
-    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - && \
     apt-get update && \
     apt-get install -y google-cloud-sdk=${GCLOUD_CLI_VERSION} azure-cli=${AZURE_CLI_VERSION} && \
     rm -rf /var/lib/apt/lists/* && \
