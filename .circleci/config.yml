@@ -1,0 +1,50 @@
+version: 2.1
+
+jobs:
+  security-check:
+    docker:
+      - image: circleci/python:3.6
+    steps:
+      - checkout
+      - run: sudo make install-vulnerabilities-checker
+      - run: make check-vulnerabilities
+  python:
+    docker:
+      - image: circleci/python:3.6
+    steps:
+      - checkout
+      - run:
+          name: Setup
+          command: |
+            make install-jupyterlab-plugin
+            make install-unittests
+      - run:
+          name: Lint
+          command: make lint
+  nodejs:
+    docker:
+      - image: circleci/node:10
+    steps:
+      - checkout
+      - run:
+          name: Setup
+          command: |
+            npm install yarn
+            yarn install --non-interactive --ignore-scripts
+      - run:
+          name: Build            
+          command: yarn build
+      - run:
+          name: Lint
+          command: yarn lint
+
+workflows:
+  main:
+    jobs:
+      - security-check
+      - python:
+          requires:
+            - security-check
+      - nodejs:
+          requires:
+            - security-check

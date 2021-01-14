@@ -371,14 +371,18 @@ class CloudApplyFromFileHandler(BaseCloudOdahuflowHandler):
         try:
             resources = parse_resources_file(data.path)
         except Exception as parse_exception:
-            raise HTTPError(log_message=f'Can not parse resources file {data.path}: {parse_exception}')
+            raise HTTPError(
+                log_message=f'Can not parse resources file {data.path}: {parse_exception}'
+            ) from parse_exception
 
         try:
             result = await async_apply(resources, client, data.removal)
         except APIConnectionException as edi_exception:
             raise edi_exception
         except Exception as apply_exception:
-            raise HTTPError(log_message=f'Can not apply changes from resources file {data.path}: {apply_exception}')
+            raise HTTPError(
+                log_message=f'Can not apply changes from resources file {data.path}: {apply_exception}'
+            ) from apply_exception
 
         self.finish_with_json({
             'created': self._prepare_resources_list(result.created),
