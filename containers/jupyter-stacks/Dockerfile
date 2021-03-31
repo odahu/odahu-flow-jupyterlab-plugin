@@ -5,8 +5,6 @@ FROM jupyter/${NOTEBOOK_TYPE}-notebook:${NOTEBOOK_TAG}
 
 ARG JUPYTERLAB_VERSION=1.2.3
 ARG AWS_CLI_VERSION=2.0.57
-ARG GCLOUD_CLI_VERSION=314.0.0-0
-ARG AZURE_CLI_VERSION=2.13.0-1
 ARG ODAHU_PLUGIN_NAME=odahu-flow-jupyterlab-plugin
 ARG ODAHU_PLUGIN_VERSION
 ARG PIP_EXTRA_INDEX_URL
@@ -23,7 +21,7 @@ RUN apt-get update && apt-get install -y git unzip groff less curl apt-transport
     echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/azure-cli.list && \
     echo "deb https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
     apt-get update && \
-    apt-get install -y google-cloud-sdk=${GCLOUD_CLI_VERSION} azure-cli="${AZURE_CLI_VERSION}~$(lsb_release -cs)" && \
+    apt-get install -y google-cloud-sdk azure-cli && \
     rm -rf /var/lib/apt/lists/* && \
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-${AWS_CLI_VERSION}.zip" -o "awscliv2.zip" && \
     unzip awscliv2.zip && \
