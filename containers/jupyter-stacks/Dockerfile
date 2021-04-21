@@ -29,7 +29,7 @@ RUN apt-get update && apt-get install -y git unzip groff less curl apt-transport
     pip install --no-cache-dir \
     jupyterlab==${JUPYTERLAB_VERSION} \
     jupytext==1.1.7 \
-    jupyterlab-git \
+    jupyterlab-git==0.24.0 \
     ${ODAHU_PLUGIN_NAME}==${ODAHU_PLUGIN_VERSION//-/}
 
 RUN jupyter serverextension enable --sys-prefix --py odahuflow.jupyterlab && \
