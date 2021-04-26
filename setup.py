@@ -60,6 +60,7 @@ setup(
     version=extract_version(),
     install_requires=[
         'odahu-flow-sdk==1.4.0rc5',
+        'odahu-flow-cli==1.4.0rc5',
         'notebook',
         'pydantic>=1.2',
     ],
