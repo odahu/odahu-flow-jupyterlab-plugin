@@ -129,6 +129,7 @@ pipeline {
                 script {
                     def buildArgs = """--build-arg NPM_EXTRA_INDEX_URL=https://${env.param_npm_private_url}
                                        --build-arg ODAHU_PLUGIN_VERSION=${Globals.buildVersion}
+                                       --build-arg ODAHU_EXAMPLES_VERSION=${Globals.buildVersion}
                                     """.replaceAll("\\s+"," ")
                     def buildStages = [:]
                     jupyterImgTypes.each { type ->

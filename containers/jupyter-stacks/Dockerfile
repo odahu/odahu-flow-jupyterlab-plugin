@@ -6,6 +6,7 @@ FROM jupyter/${NOTEBOOK_TYPE}-notebook:${NOTEBOOK_TAG}
 ARG JUPYTERLAB_VERSION=1.2.3
 ARG ODAHU_PLUGIN_NAME=odahu-flow-jupyterlab-plugin
 ARG ODAHU_PLUGIN_VERSION
+ARG ODAHU_EXAMPLES_VERSION
 ARG PIP_EXTRA_INDEX_URL
 ARG NPM_EXTRA_INDEX_URL=https://registry.npmjs.org/
 
@@ -30,7 +31,8 @@ RUN apt-get update && apt-get install -y git unzip groff less curl apt-transport
     jupyterlab==${JUPYTERLAB_VERSION} \
     jupytext==1.1.7 \
     jupyterlab-git==0.24.0 \
-    ${ODAHU_PLUGIN_NAME}==${ODAHU_PLUGIN_VERSION//-/}
+    ${ODAHU_PLUGIN_NAME}==${ODAHU_PLUGIN_VERSION//-/} && \
+    sudo -H -u `id -nu $NB_UID` bash -c "git clone -b ${ODAHU_EXAMPLES_VERSION} https://github.com/odahu/odahu-examples.git ~/work/odahu-examples"
 
 RUN jupyter serverextension enable --sys-prefix --py odahuflow.jupyterlab && \
     jupyter serverextension enable --sys-prefix --py jupyterlab_git && \
