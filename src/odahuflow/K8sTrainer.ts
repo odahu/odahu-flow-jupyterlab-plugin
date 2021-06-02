@@ -1,6 +1,6 @@
 /**
  * API Gateway
- * This is an API Gateway server.
+ * This is an API Gateway webServer.
  *
  * OpenAPI spec version: 1.0
  * 
@@ -13,6 +13,11 @@
 import * as models from './models';
 
 export interface K8sTrainer {
+    /**
+     * Connection for source code
+     */
+    algorithmSourceConnection?: models.Connection;
+
     /**
      * Connection for training data
      */
@@ -32,10 +37,5 @@ export interface K8sTrainer {
      * Toolchain integration
      */
     toolchainIntegration?: models.ToolchainIntegration;
-
-    /**
-     * Connection for source code
-     */
-    vcs?: models.Connection;
 
 }

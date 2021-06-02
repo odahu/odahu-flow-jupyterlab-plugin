@@ -1,6 +1,6 @@
 /**
  * API Gateway
- * This is an API Gateway server.
+ * This is an API Gateway webServer.
  *
  * OpenAPI spec version: 1.0
  * 
@@ -13,6 +13,11 @@
 import * as models from './models';
 
 export interface ModelTrainingSpec {
+    /**
+     * AlgorithmSource for training
+     */
+    algorithmSource?: models.AlgorithmSource;
+
     args?: Array<string>;
 
     /**
@@ -33,7 +38,7 @@ export interface ModelTrainingSpec {
     /**
      * Model training hyperParameters in parameter:value format
      */
-    hyperParameters?: any;
+    hyperParameters?: { [key: string]: string; };
 
     /**
      * Train image
@@ -46,9 +51,14 @@ export interface ModelTrainingSpec {
     model?: models.ModelIdentity;
 
     /**
-     * VCS Reference
+     * Node selector for specifying a node pool
      */
-    reference?: string;
+    nodeSelector?: { [key: string]: string; };
+
+    /**
+     * Name of Connection to storage where training output artifact will be stored. Permitted connection types are defined by specific toolchain
+     */
+    outputConnection?: string;
 
     /**
      * Resources for model container The same format like k8s uses for pod resources.
@@ -59,11 +69,6 @@ export interface ModelTrainingSpec {
      * IntegrationName of toolchain
      */
     toolchain?: string;
-
-    /**
-     * Name of Connection resource. Must exists
-     */
-    vcsName?: string;
 
     /**
      * Directory with model scripts/files in a git repository

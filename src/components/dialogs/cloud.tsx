@@ -214,10 +214,19 @@ export function showCloudTrainInformationDialog(
           {training.spec.model.name} / {training.spec.model.version}
         </p>
 
-        <h3 className={style.fieldLabelStyle}>VCS</h3>
-        <p className={style.fieldTextStyle}>
-          {training.spec.vcsName}:{training.spec.reference}
-        </p>
+        <h3 className={style.fieldLabelStyle}>Algorithm Source</h3>
+        {!!training.spec.algorithmSource.vcs.connection && (
+          <p className={style.fieldTextStyle}>
+            {training.spec.algorithmSource.vcs.connection}:
+            {training.spec.algorithmSource.vcs.reference}
+          </p>
+        )}
+        {!!training.spec.algorithmSource.objectStorage.connection && (
+          <p className={style.fieldTextStyle}>
+            {training.spec.algorithmSource.objectStorage.connection}:
+            {training.spec.algorithmSource.objectStorage.path}
+          </p>
+        )}
         <h3 className={style.fieldLabelStyle}>File (working directory)</h3>
         <p className={style.fieldTextStyle}>
           {training.spec.entrypoint}{' '}
